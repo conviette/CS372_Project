@@ -1,5 +1,6 @@
 from nltk.corpus import inaugural, stopwords, wordnet
 from nltk.wsd import lesk
+import json
 
 
 eco_rations = dict()
@@ -25,7 +26,7 @@ def main():
 
 
 
-    for fileid in inaugural.fileids():
+    for fileid in filter(lambda x:int(x[:4])>=1960, inaugural.fileids()):
         corpus = clean_corpus(inaugural.sents(fileid))
         count = 0
         total_len = sum(map(len, corpus))
@@ -39,6 +40,9 @@ def main():
     pres = list(eco_rations.keys())
     pres.sort(key=lambda x:eco_rations[x])
     print(pres)
+
+    with open('president_scores.json', 'w') as f:
+        json.dump(eco_rations, f)
 
 
 
