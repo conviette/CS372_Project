@@ -1,7 +1,8 @@
 from nltk.corpus import wordnet as wn
 import nltk
 
-def convert_and_similarity(syn_name):
+def convert_pos(syn_name):
+    #find similar words but have different pos
     # Get all lemmas
     lemmas = [l for l in wn.synset(syn_name).lemmas()]
 
@@ -16,7 +17,7 @@ def convert_and_similarity(syn_name):
 
 
 seed = ['economy.n.01', 'trade.n.01', 'market.n.01', 'money.n.01', 'work.n.01', 'worker.n.01']
-other_pos = [convert_and_similarity(syn_name) for syn_name in seed]
+other_pos = [convert_pos(syn_name) for syn_name in seed]
 print(other_pos)
 seed = list(map(lambda x:wn.synset(x), seed))
 seed += [s for syns in other_pos for s in syns]
