@@ -3,11 +3,11 @@
 import numpy as np
 import random
 
-Max_Update = 100
-Epsilon = 0.0001
+Max_Update = 1000
+Epsilon = 0.001
 Initial_Learning_Rate = 0.3
 
-def train_LR(d, label, lmda=0):
+def train_LR(d, label, lmda=0, random_seed = None):
     '''
 
     :param data: data without bias
@@ -18,6 +18,7 @@ def train_LR(d, label, lmda=0):
     Learning_Rate = Initial_Learning_Rate
     ex_size = len(d)
     dim_size = len(d[0])
+    if random_seed: random.seed(random_seed)
     theta = np.array([[random.random() for i in range(dim_size+1)]])
     theta = theta.T
     data = np.ones((ex_size,dim_size+1))
@@ -40,6 +41,7 @@ def train_LR(d, label, lmda=0):
             if x<min_val:
                 min_val = x
         interval = max_val - min_val
+        if interval==0: interval=1
         normalize[j][0] = min_val
         normalize[j][1] = interval
 
@@ -66,6 +68,7 @@ def train_LR(d, label, lmda=0):
                 Learning_Rate *= 3.16
                 i=0
                 print('increased learning rate to ', Learning_Rate)
+                break
 
 
 
@@ -103,7 +106,7 @@ def test_LR(X,Y,theta,normalize):
 
     return mer
 
-def k_fold(k,data,label):
+def k_fold(k,data,label,lmda=0.0, random_seed = None):
     def concat_all(data):  # concatinate all array in a list, all elements should have same number of columns
         dat = data[0]
         for ind in range(1, len(data)):
@@ -119,6 +122,8 @@ def k_fold(k,data,label):
     acc_test = []
 
     #shuffle data
+    if random_seed:
+        np.random.seed(random_seed)
     idx = np.arange(ex_size)
     np.random.shuffle(idx)
     X = data[idx]
@@ -139,7 +144,7 @@ def k_fold(k,data,label):
         X_train = concat_all(X_train)
         y_train = concat_all(y_train)
 
-        theta,normalize,accuracy_train = train_LR(X_train,y_train)
+        theta,normalize,accuracy_train = train_LR(X_train,y_train,lmda=lmda,random_seed=random_seed+3)
         accuracy_test = test_LR(X_test,y_test,theta,normalize)
         acc_train.append(accuracy_train)
         acc_test.append(accuracy_test)
@@ -153,7 +158,31 @@ def k_fold(k,data,label):
 
     return np.mean(acc_train), np.mean(acc_test)
 
+def best_lambda(k,data,label):
+    seed = 41
+    print("\nlambda: 0.3")
+    train,test = k_fold(k,data,label,lmda=0.3,random_seed=seed)
+    best_l = 0.3
+    best_acc = test
+    mul = 1/1.2
+    cur_l = best_l*mul
 
+
+    cnt = 0
+    while(cnt<=20):
+        cur_l *= mul
+        print("\nlambda: ", cur_l)
+        x,cur_acc = k_fold(k,data,label,lmda=cur_l,random_seed=seed)
+        if cur_acc<best_acc:
+            best_acc=cur_acc
+            best_l = cur_l
+
+        cnt+=1
+
+
+    print("\nbest accuracy: ", best_acc)
+    print("best lambda: ",best_l)
+    return best_acc,best_l
 
 train_X = np.array([[1,1,1],[2,2,2],[3,3,2],[4,4,5],[4,3,3],[1,2,1],[-1,-1,-1],[-2,-1,-2]])
 train_Y = np.array([[2,3,4,5,4,2,0,-1]])
@@ -167,6 +196,6 @@ kf_X = np.array([[1,1,1],[2,2,2],[3,3,2],[4,4,5],[4,3,3],[1,2,1],[-1,-1,-1],[-2,
 kf_Y = np.array([[2,3,4,5,4,2,0,-1,1,-0.3,-2]])
 kf_Y = kf_Y.T
 
-k_fold(3,kf_X,kf_Y)
+#k_fold(3,kf_X,kf_Y)
 #theta, normalize = train_LR(train_X, train_Y)
 #test_LR(test_X,test_Y,theta,normalize)
