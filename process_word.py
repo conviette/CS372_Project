@@ -4,6 +4,10 @@ import numpy as np
 from Linear_Regression import *
 import matplotlib.pyplot as plt
 
+'''
+compatible with find_keywords_group.py and Linear_Regression.py
+this finds # of seed words and accuracy
+'''
 
 eco_rations = dict()
 stop_words = set(stopwords.words('english'))
