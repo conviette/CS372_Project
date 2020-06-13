@@ -1,4 +1,5 @@
 from nltk.corpus import wordnet as wn
+import json
 
 def convert_pos(syn_name):
     #find similar words but have different pos
@@ -32,8 +33,14 @@ for s in seed:
 
     group.append(lexicon)
 
-with open('keyword_group.txt', 'w') as f:
+with open('..\\data\\keyword_group.txt', 'w') as f:
     for g in group:
         f.write('group\n')
         for s in g:
             f.write(s.name()+'\n')
+
+group_dict = dict()
+for i in range(len(seed)):
+    group_dict[seed[i].name().split('.')[0]] = list(map(lambda x:x.name(), group[i]))
+with open('..\\data\\keyword_group.json', 'w') as f:
+    json.dump(group_dict, f)

@@ -1,12 +1,6 @@
-Total number of data points: 15
-p value: 0.17635606936388307
-r squared: 0.676059604409549
-const         4.805821
-economy     334.123005
-trade      1810.633859
-market     -880.743139
-money     -1201.964198
-job       -1075.275295
-service   -1259.631134
-gold       5134.928064
+Total number of data points: 96
+p value: 0.14097464626278158
+r squared: 0.04369871521581592
+const      4.096239
+money   -235.816419
 dtype: float64

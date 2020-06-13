@@ -1,5 +1,6 @@
 from nltk.corpus import inaugural, stopwords, wordnet
 from nltk.wsd import lesk
+from nltk import word_tokenize, sent_tokenize
 import numpy as np
 import json
 
@@ -27,7 +28,7 @@ def find_features(corpus_dict): #corpus: dict of year:[list of sents]
     for fileid in corpus_dict:
         corpus = clean_corpus(corpus_dict[fileid])
         total_len = sum(map(len, corpus))
-        ind = fileid[:-4]
+        ind = fileid.split('.')[0]
         Synset_usage = dict((x, 0) for x in key_synsets)
         for sent in corpus:
             sent = ' '.join(sent).lower()
@@ -40,22 +41,25 @@ def find_features(corpus_dict): #corpus: dict of year:[list of sents]
         features_dict[ind] = Synset_usage
     return features_dict
 
+def process_bodytext(text):
+    text = sent_tokenize(text)
+    return list(map(word_tokenize, text))
 
 def main():
 
     inaug = dict((fileid, inaugural.sents(fileid)) for fileid in filter(lambda x:int(x[:4])>=1960, inaugural.fileids()))
-    print(inaug.keys())
     features_dict = find_features(inaug) #The word the President said and its amount
-
-
-
-
     print(features_dict)
-
-    with open('..\\data\\president_scores.json', 'w') as f:
+    with open('..\\data\\inaugural_scores.json', 'w') as f:
         json.dump(features_dict, f)
 
-
+    with open('..\\data\\sotus_a.json') as f:
+        sotus = json.load(f)
+    sotus = dict((x['date'][-4:], process_bodytext(x['body'])) for x in sotus)
+    features_dict = find_features(sotus)
+    print(features_dict)
+    with open('..\\data\\sotus_scores.json', 'w') as f:
+        json.dump(features_dict, f)
 
 if __name__ == '__main__':
     main()

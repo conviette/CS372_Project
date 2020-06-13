@@ -9,21 +9,22 @@ STAT_NAME = 'GDP_GROWTH'
 
 def main():
 
-    with open('..\\data\\president_scores.json') as f:
+    with open('..\\data\\sotus_scores.json') as f:
         emph = json.load(f)
 
     ind_df = pd.read_csv('..\\data\\Economic_indicators.csv')
 
 
     years = dict(map(lambda x:(int(x[:4]), x), emph.keys()))
-    print(years)
     results = ind_df[ind_df.YEAR.isin(years)].reset_index(drop=True)
+    emph = dict((x, emph[x]) for x in emph.keys() if int(x) in list(map(int, results.YEAR)))
+    print(len(emph))
     features = pd.DataFrame.from_dict(emph, orient='index').reset_index(drop=True).astype(float)
 
     print(features.head())
 
     #run linear regression for bias score vs statistics
-    X = sm.add_constant(features)
+    X = sm.add_constant(features['money'])
     Y = results[STAT_NAME].astype(float)
     model = sm.OLS(Y, X).fit()
     print('p value: ', model.f_pvalue)
