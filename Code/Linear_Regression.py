@@ -57,13 +57,13 @@ def train_LR(d, label, lmda=0, random_seed = None):
         mer = square[0][0] / ex_size
 
         if i>=1:
-            if mean_error_rate[-1] - mer < 0: #learning rate is too large that error rate increases
+            if abs(mean_error_rate[-1] - mer) < Epsilon:
+                mean_error_rate.append(mer)
+                break
+            elif mean_error_rate[-1] - mer < 0: #learning rate is too large that error rate increases
                 Learning_Rate /= 3.16 #multiple root(10)
                 i=0
                 print('decreased learning rate to ', Learning_Rate)
-            elif (mean_error_rate[-1] - mer) < Epsilon:
-                mean_error_rate.append(mer)
-                break
             if i==Max_Update: #learning rate is too small
                 Learning_Rate *= 3.16
                 i=0
@@ -144,7 +144,11 @@ def k_fold(k,data,label,lmda=0.0, random_seed = None):
         X_train = concat_all(X_train)
         y_train = concat_all(y_train)
 
-        theta,normalize,accuracy_train = train_LR(X_train,y_train,lmda=lmda,random_seed=random_seed+3)
+
+        if random_seed:
+            theta,normalize,accuracy_train = train_LR(X_train,y_train,lmda=lmda,random_seed=random_seed+3)
+        else:
+            theta, normalize, accuracy_train = train_LR(X_train, y_train, lmda=lmda)
         accuracy_test = test_LR(X_test,y_test,theta,normalize)
         acc_train.append(accuracy_train)
         acc_test.append(accuracy_test)
@@ -152,18 +156,19 @@ def k_fold(k,data,label,lmda=0.0, random_seed = None):
     #print(acc_train)
     #print(acc_test)
 
-
-    print("training accuracy", np.mean(acc_train))
-    print("test accuracy", np.mean(acc_test))
+    #print("\nlambda: ",lmda)
+    #print("training accuracy", np.mean(acc_train))
+    #print("test accuracy", np.mean(acc_test))
 
     return np.mean(acc_train), np.mean(acc_test)
 
 def best_lambda(k,data,label):
+    #seed = 41 #1.285 #0.019
     seed = 41
-    print("\nlambda: 0.3")
     train,test = k_fold(k,data,label,lmda=0.3,random_seed=seed)
     best_l = 0.3
     best_acc = test
+    best_train = train
     mul = 1/1.2
     cur_l = best_l*mul
 
@@ -171,10 +176,10 @@ def best_lambda(k,data,label):
     cnt = 0
     while(cnt<=20):
         cur_l *= mul
-        print("\nlambda: ", cur_l)
-        x,cur_acc = k_fold(k,data,label,lmda=cur_l,random_seed=seed)
+        train,cur_acc = k_fold(k,data,label,lmda=cur_l,random_seed=seed)
         if cur_acc<best_acc:
             best_acc=cur_acc
+            best_train = train
             best_l = cur_l
 
         cnt+=1
@@ -182,7 +187,7 @@ def best_lambda(k,data,label):
 
     print("\nbest accuracy: ", best_acc)
     print("best lambda: ",best_l)
-    return best_acc,best_l
+    return best_train,best_acc,best_l
 
 train_X = np.array([[1,1,1],[2,2,2],[3,3,2],[4,4,5],[4,3,3],[1,2,1],[-1,-1,-1],[-2,-1,-2]])
 train_Y = np.array([[2,3,4,5,4,2,0,-1]])
