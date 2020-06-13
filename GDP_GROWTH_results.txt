@@ -1,6 +1,0 @@
-Total number of data points: 15
-p value: 0.0878556211800071
-r squared: 0.2076035092402343
-const      6.748756
-emph    -184.523876
-dtype: float64
