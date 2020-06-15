@@ -1,13 +1,16 @@
 from nltk.corpus import inaugural, stopwords, wordnet
-from nltk.wsd import lesk
 from nltk import word_tokenize, sent_tokenize
 import numpy as np
 import json
+from project_dataset import textData
 
+##calculating features for each year
 
+##get stopwords
 stop_words = set(stopwords.words('english'))
 
 
+###get keyword dictionary###
 def syn_to_lem(key_synsets):
     words = set()
     for syns in key_synsets:
@@ -15,51 +18,91 @@ def syn_to_lem(key_synsets):
         words.update(list(map(lambda x:' '.join(x.name().split('_')).lower(), syns.lemmas())))
     return words
 
-with open('..\\data\\keyword_group.json') as f:
-    keywords = json.load(f)
-keywords = dict((x.split('.')[0], syn_to_lem(keywords[x])) for x in keywords.keys())
-key_synsets = list(keywords.keys())
+def get_keywords_wordnet(): #from wordnet
+    with open('..\\data\\keyword_group.json') as f:
+        keywords = json.load(f)
+    keywords = dict((x.split('.')[0], syn_to_lem(keywords[x])) for x in keywords.keys())
+    key_synsets = list(keywords.keys())
+    return keywords, key_synsets
 
-def clean_corpus(corpus):
-    return list(map(lambda sent:list(filter(lambda word:not word in stop_words, sent)), corpus))
+def lemmatize_group(l):
+    output = set()
+    for word in l:
+        synsets = wordnet.synsets(word)
+        for syns in synsets:
+            output.update(list(map(lambda x:' '.join(x.name().split('_')).lower(), syns.lemmas())))
+    return list(output)
 
-def find_features(corpus_dict): #corpus: dict of year:[list of sents]
-    features_dict = dict()
-    for fileid in corpus_dict:
-        corpus = clean_corpus(corpus_dict[fileid])
-        total_len = sum(map(len, corpus))
-        ind = fileid.split('.')[0]
-        Synset_usage = dict((x, 0) for x in key_synsets)
-        for sent in corpus:
-            sent = ' '.join(sent).lower()
-            for key, pool in keywords.items():
-                count = 0
-                for w in pool:
-                    if w in sent:
-                        count+=1
-                Synset_usage[key] +=count/total_len
-        features_dict[ind] = Synset_usage
-    return features_dict
+def get_keywords_reuters():
+    with open('..\\data\\reuters_keywords.json') as f:
+        keywords = json.load(f)
+    keywords = dict((x, lemmatize_group(keywords[x])) for x in keywords)
+    key_synsets = list(keywords.keys())
+    return keywords, key_synsets
 
-def process_bodytext(text):
-    text = sent_tokenize(text)
-    return list(map(word_tokenize, text))
+##keywords = dictionary, {feature name:[list of keywords (with all forms of lemmatization)]}
+##ex. {'money':['money', 'monetize', 'currency', 'currencies'...]}
+##key_synsets = list of feature names (ex. ['money', 'trade', 'economy'...])
+
+keywords, key_synsets = get_keywords_wordnet() #or get_keyword_reuters, or any other keyword getting function
+
+def clean_corpus(corpus): #any preprocessing for corpus
+    return list(map(lambda sent:list(filter(lambda word:not word in stop_words, sent)), corpus)) #discarding stopwords
+
+#####functions for computing each features#########
+#####all functions must accept feature_dict as input, and add entry "feature_name" mapped to number
+def count_frequencies(corpus, feature_dict, total_len):
+    for key in keywords:
+        feature_dict[key] = 0
+    for sent in corpus:
+        sent = ' '.join(sent).lower()
+        for key, pool in keywords.items():
+            count = 0
+            for w in pool:
+                if w in sent:
+                    count+=1
+            feature_dict[key] +=count/total_len
+
+
+
+def find_features(corpus_dict): #input corpus_dict: dict {year:[list of sents]}
+    features_for_year = dict()
+    for fileid in corpus_dict: #for each year
+        corpus = clean_corpus(corpus_dict[fileid]) #clean corpus
+        total_len = sum(map(len, corpus)) #total length of corpus (to normalize)
+        feature_dict = dict() #dictionary: map feature name->feature(number)
+        #######calculate features#######
+        count_frequencies(corpus, feature_dict, total_len)
+
+
+        features_for_year[fileid] = feature_dict
+    return features_for_year #output features_for_year: dict {year:{feature_name:float}}
+
+
 
 def main():
 
-    inaug = dict((fileid, inaugural.sents(fileid)) for fileid in filter(lambda x:int(x[:4])>=1960, inaugural.fileids()))
+    ###Inaugural corpus
+    inaug = textData('INAUGURAL').corpus
     features_dict = find_features(inaug) #The word the President said and its amount
-    print(features_dict)
+    #print(features_dict)
     with open('..\\data\\inaugural_scores.json', 'w') as f:
         json.dump(features_dict, f)
 
-    with open('..\\data\\sotus_a.json') as f:
-        sotus = json.load(f)
-    sotus = dict((x['date'][-4:], process_bodytext(x['body'])) for x in sotus)
+    ###State of the Union Speech
+    sotus = textData('SOTUS').corpus
     features_dict = find_features(sotus)
-    print(features_dict)
+    #print(features_dict)
     with open('..\\data\\sotus_scores.json', 'w') as f:
         json.dump(features_dict, f)
+
+    ###All Oral Speeches
+    oral = textData('ORAL').corpus
+    features_dict = find_features(oral)
+    #print(features_dict)
+    with open('..\\data\\oral_scores.json', 'w') as f:
+        json.dump(features_dict, f)
+
 
 if __name__ == '__main__':
     main()

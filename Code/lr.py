@@ -5,11 +5,12 @@ import statsmodels.api as sm
 import matplotlib.pyplot as plt
 from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
-STAT_NAME = 'GDP_GROWTH'
+STAT_NAME = 'GDP_GROWTH' ##or 'EXPORT_INDEX' or 'UNEMPLOYMENT'
+CORPUS_NAME = 'sotus' ##or 'inaugural' or 'oral'
 
 def main():
 
-    with open('..\\data\\sotus_scores.json') as f:
+    with open('..\\data\\{}_scores.json'.format(CORPUS_NAME)) as f:
         emph = json.load(f)
 
     ind_df = pd.read_csv('..\\data\\Economic_indicators.csv')
@@ -30,7 +31,7 @@ def main():
     print('p value: ', model.f_pvalue)
     print('r squared: ', model.rsquared)
     print(model.summary())
-    with open('..\\results\\{}_results.txt'.format(STAT_NAME), 'w') as f:
+    with open('..\\results\\{}_{}_results.txt'.format(STAT_NAME, CORPUS_NAME), 'w') as f:
         f.write('Total number of data points: {}\n'.format(len(years)))
         f.write('p value: {}\n'.format(model.f_pvalue))
         f.write('r squared: {}\n'.format(model.rsquared))
