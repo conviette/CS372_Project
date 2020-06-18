@@ -1,6 +1,6 @@
 from nltk.corpus import reuters, stopwords, wordnet
 from nltk import FreqDist
-import re, math
+import re, math, json
 
 keys = ['crude', 'fuel', 'gas', 'gnp', 'gold', 'income', 'interest', 'ipi', 'money-fx', 'money-supply', 'trade']
 STOP = stopwords.words('english')
@@ -29,5 +29,5 @@ for key in keys:
     keywords[key] = sorted(list(score.keys()), key=lambda x:score[x], reverse=True)[:30]
     print(keywords[key])
 
-with open('reuters_keywords.json', 'w') as f:
+with open('..\\data\\reuters_keywords.json', 'w') as f:
     json.dump(keywords, f)

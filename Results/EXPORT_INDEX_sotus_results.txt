@@ -1,0 +1,6 @@
+Total number of data points: 96
+p value: nan
+r squared: nan
+const   NaN
+money   NaN
+dtype: float64

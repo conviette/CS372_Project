@@ -1,0 +1,6 @@
+Total number of data points: 96
+p value: 0.630064485267164
+r squared: 0.004771262526345299
+const     5.752839
+money    61.462349
+dtype: float64

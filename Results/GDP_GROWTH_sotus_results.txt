@@ -1,0 +1,7 @@
+Total number of data points: 96
+p value: 0.035581267460639034
+r squared: 0.12976965000737828
+const           -2.522062
+work            63.565975
+opportunity    165.744366
+dtype: float64

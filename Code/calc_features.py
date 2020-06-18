@@ -55,14 +55,30 @@ def count_frequencies(corpus, feature_dict, total_len):
     for key in keywords:
         feature_dict[key] = 0
     for sent in corpus:
-        sent = ' '.join(sent).lower()
         for key, pool in keywords.items():
-            count = 0
-            for w in pool:
-                if w in sent:
-                    count+=1
-            feature_dict[key] +=count/total_len
+            feature_dict[key] +=count_from_pool(sent, pool)/total_len
 
+def count_from_pool(sent, pool):
+    sent = ' '.join(sent).lower()
+    count = 0
+    for w in pool:
+        if w in sent:
+            count+=1
+    return count
+
+def freq_dist(corpus, feature_dict, total_len):
+    for key in ['first', 'middle', 'last']:
+        feature_dict[key] = 0
+    first, middle, last = corpus[:len(corpus)//3], corpus[len(corpus)//3:len(corpus)*2//3], corpus[len(corpus)*2//3:]
+    keyword_pool = []
+    for key, pool in keywords.items():
+        keyword_pool.extend(pool)
+    for sent in first:
+        feature_dict['first'] +=count_from_pool(sent, keyword_pool)/total_len
+    for sent in middle:
+        feature_dict['middle'] +=count_from_pool(sent, keyword_pool)/total_len
+    for sent in last:
+        feature_dict['last'] +=count_from_pool(sent, keyword_pool)/total_len
 
 
 def find_features(corpus_dict): #input corpus_dict: dict {year:[list of sents]}
@@ -73,7 +89,7 @@ def find_features(corpus_dict): #input corpus_dict: dict {year:[list of sents]}
         feature_dict = dict() #dictionary: map feature name->feature(number)
         #######calculate features#######
         count_frequencies(corpus, feature_dict, total_len)
-
+        #freq_dist(corpus, feature_dict, total_len)
 
         features_for_year[fileid] = feature_dict
     return features_for_year #output features_for_year: dict {year:{feature_name:float}}
