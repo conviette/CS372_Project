@@ -1,6 +1,55 @@
 Total number of data points: 98
-p value: 0.5055017539580751
-r squared: 0.007956403562739411
-const      2.780063
-money    159.506706
+p value: 0.8262626908601028
+r squared: 0.82207735542822
+const                  1.232079
+folks              -1251.999744
+jobs                 552.610647
+class               -924.105133
+view                1404.886847
+paying              5854.703841
+everybody          -5239.367244
+investments        -7231.186342
+equal               -291.522748
+challenge           -296.544121
+works              -1982.852820
+wait                 959.665219
+makes               2405.474429
+change             -1934.390720
+promote            -2425.779334
+laughter             999.147421
+ended              -1824.220212
+guarantee          -7701.946792
+away                 957.185655
+medicine           -2086.138324
+kids                1896.408509
+right               -371.591007
+told                1980.721586
+submit             26590.385702
+like                 472.886973
+when                -251.345077
+manufacturing       3773.869363
+thing                547.291670
+field               1433.046820
+necessity          -6534.045910
+trillion           -4616.462414
+simple               996.551674
+enforcement         2584.197918
+june                -327.619467
+carried             1959.288052
+plans               -905.685824
+home                 906.270612
+greatest           -1268.351697
+party              -3650.903211
+crisis              1863.109214
+required            2867.779622
+sector             -2142.736637
+parties             4072.521311
+that               -1134.656902
+helps              -1201.736113
+middle_class       11669.030443
+government_must     7783.369547
+united_nations      -622.178960
+climate_change      3828.974908
+lasting_peace      -1154.247488
+american_life      -3947.523344
 dtype: float64

@@ -6,7 +6,7 @@ import statsmodels.api as sm
 import matplotlib.pyplot as plt
 from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
-STAT_NAME = 'UNEMPLOYMENT' ##'GDP_GROWTH' or 'EXPORT_INDEX' or 'UNEMPLOYMENT'
+STAT_NAME = 'GDP_GROWTH' ##'GDP_GROWTH' or 'EXPORT_INDEX' or 'UNEMPLOYMENT'
 CORPUS_NAME = 'sotus' ##'sotus' or 'inaugural' or 'oral'
 
 def main():
@@ -32,12 +32,12 @@ def main():
         Y = results[STAT_NAME].astype(float)
         model = sm.OLS(Y, X).fit()
         if model.f_pvalue != np.nan:
-            pdict[feature] = model.f_pvalue
-    print(model.summary())
-    features = sorted(list(pdict.keys()), key=lambda x:pdict[x])[:100]
-    for key in features:
+            pdict[feature] = (model.f_pvalue, model.rsquared)
+    key_features = sorted(list(pdict.keys()), key=lambda x:(pdict[x][0]/pdict[x][1]))[:50]
+    for key in key_features:
         print(key, pdict[key])
-
+    with open('..\\Data\\{}_found_features.json'.format(STAT_NAME), 'w') as f:
+        json.dump(key_features, f)
 
 
 

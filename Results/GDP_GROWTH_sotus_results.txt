@@ -1,7 +1,15 @@
 Total number of data points: 96
-p value: 0.035581267460639034
-r squared: 0.12976965000737828
-const           -2.522062
-work            63.565975
-opportunity    165.744366
-dtype: float64
+p value: nan
+r squared: 1.0
+const                  2.707811
+police               957.889185
+crime                 48.658045
+children            -476.121861
+difficult            245.577959
+                        ...    
+labor_management      34.420602
+national_interest   -132.524390
+small_businesses    -371.835156
+world_peace         -870.021783
+make_possible        217.906223
+Length: 101, dtype: float64

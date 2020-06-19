@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
 STAT_NAME = 'GDP_GROWTH' ##'GDP_GROWTH' or 'EXPORT_INDEX' or 'UNEMPLOYMENT'
-CORPUS_NAME = 'sotus' ##'sotus' or 'inaugural' or 'oral'
+CORPUS_NAME = 'oral' ##'sotus' or 'inaugural' or 'oral'
 
 def main():
 
-    with open('..\\data\\{}_scores.json'.format(CORPUS_NAME)) as f:
+    with open('..\\data\\{}_{}_test_scores.json'.format(CORPUS_NAME, STAT_NAME)) as f:
         emph = json.load(f)
 
     ind_df = pd.read_csv('..\\data\\Economic_indicators.csv')
@@ -25,7 +25,7 @@ def main():
     print(features.head())
 
     #run linear regression for bias score vs statistics
-    X = sm.add_constant(features[['work', 'opportunity']])
+    X = sm.add_constant(features)
     Y = results[STAT_NAME].astype(float)
     model = sm.OLS(Y, X).fit()
     print('p value: ', model.f_pvalue)
