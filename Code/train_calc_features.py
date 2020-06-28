@@ -3,6 +3,10 @@ from nltk import word_tokenize, sent_tokenize, FreqDist, DictionaryProbDist
 import numpy as np
 import json, re
 from project_dataset import textData
+'''
+    added
+'''
+import feature_tense
 
 ##calculating features for each year
 
@@ -28,6 +32,21 @@ def find_features_agg(corpus_dict): ###edit this function to add featuress
     ##list of possible features (ex for unigrams, list of 1500 most common unigrams in all of corpus)
     super_unigram = [x[0] for x in FreqDist([word for sent in supercorpus for word in sent]).most_common(1500)]
     super_bigram = ['_'.join(x[0]) for x in FreqDist([(s[i], s[i+1]) for s in supercorpus for i in range(len(s)-1)]).most_common(500)]
+    '''
+    added
+    '''
+    temp = []
+    for sent in supercorpus:
+        if not sent: continue
+        time,pn = feature_tense.tense(' '.join(sent))
+        for word in sent:
+            temp.append(word + '_' + time + '_' +pn)
+
+    temp = FreqDist(temp).most_common(500)
+    super_tense = [t[0] for t in temp]
+    print(super_tense)
+
+
 
     for fileid in corpus_dict:
         corpus = clean_corpus(corpus_dict[fileid])
@@ -53,6 +72,24 @@ def find_features_agg(corpus_dict): ###edit this function to add featuress
         ####add feature here#####
         ####save frequency to features_for_year[fileid][featurename]
         ####all documents should have same features (no features that exist in only some of the documents)
+
+        '''
+            added
+        '''
+        tense_word = []
+        for sent in corpus:
+            if not sent: continue
+            time,pn = feature_tense.tense(' '.join(sent)) #tense and positive/negative
+            for word in sent:
+                tense_word.append(word + '_' + time + '_' +pn)
+        tense_fdist = FreqDist(tense_word)
+        tense_pdist = DictionaryProbDist(tense_fdist, normalize=True)
+        for key in super_tense:
+            if key in tense_fdist:
+                features_for_year[fileid][key] = tense_pdist.prob(key)
+            else:
+                features_for_year[fileid][key] = 0.0
+
 
     return features_for_year #output features_for_year: dict {year:{feature_name:float}}
 
