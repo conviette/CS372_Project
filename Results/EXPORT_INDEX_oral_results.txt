@@ -1,0 +1,25 @@
+Total number of data points: 98
+p value: 2.404458987720828e-09
+r squared: 0.9657094698442028
+const             85.472662
+arms           15089.945511
+economic         949.459670
+defense        -5766.712707
+like           -8754.151911
+peace          -2126.582660
+indeed         50642.160832
+inflation      -2356.670595
+growth         14992.646624
+present        60523.216840
+budget          5042.531132
+wages         -62103.411009
+businesses      1669.799921
+pride           8412.369389
+strategic      23891.289436
+parties        17942.119803
+country        -3013.369042
+enterprise     22233.925676
+immigration   -10038.934883
+chance         -1850.912509
+companies     -30405.245309
+dtype: float64

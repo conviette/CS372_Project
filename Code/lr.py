@@ -13,8 +13,7 @@ def main():
     with open('..\\data\\{}_{}_test_scores.json'.format(CORPUS_NAME, STAT_NAME)) as f:
         emph = json.load(f)
 
-    ind_df = pd.read_csv('..\\data\\Economic_indicators.csv')
-
+    ind_df = pd.read_csv('..\\data\\Economic_indicators.csv')[['YEAR', STAT_NAME]].dropna(subset = [STAT_NAME])
 
     years = dict(map(lambda x:(int(x[:4]), x), emph.keys()))
     results = ind_df[ind_df.YEAR.isin(years)].reset_index(drop=True)

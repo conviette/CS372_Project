@@ -34,7 +34,7 @@ def lemmatize_group(l):
     return list(output)
 
 def get_keywords_reuters():
-    with open('..\\data\\reuters_keywords.json') as f:
+    with open('keywords_by_tf_idf.json') as f:
         keywords = json.load(f)
     keywords = dict((x, lemmatize_group(keywords[x])) for x in keywords)
     key_synsets = list(keywords.keys())
@@ -44,7 +44,7 @@ def get_keywords_reuters():
 ##ex. {'money':['money', 'monetize', 'currency', 'currencies'...]}
 ##key_synsets = list of feature names (ex. ['money', 'trade', 'economy'...])
 
-keywords, key_synsets = get_keywords_wordnet() #or get_keyword_reuters, or any other keyword getting function
+keywords, key_synsets = get_keywords_reuters() #or get_keyword_reuters, or any other keyword getting function
 
 def clean_corpus(corpus): #any preprocessing for corpus
     return list(map(lambda sent:list(filter(lambda word:not word in stop_words, sent)), corpus)) #discarding stopwords
