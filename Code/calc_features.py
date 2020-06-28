@@ -40,6 +40,14 @@ def get_keywords_reuters():
     key_synsets = list(keywords.keys())
     return keywords, key_synsets
 
+def get_keywords_tf_idf():
+    with open('..\\data\\keywords_by_tf_idf.json') as f:
+        keywords = json.load(f)
+    keywords = dict((x, lemmatize_group(keywords[x])) for x in keywords)
+    key_synsets = list(keywords.keys())
+    return keywords, key_synsets
+        
+
 ##keywords = dictionary, {feature name:[list of keywords (with all forms of lemmatization)]}
 ##ex. {'money':['money', 'monetize', 'currency', 'currencies'...]}
 ##key_synsets = list of feature names (ex. ['money', 'trade', 'economy'...])

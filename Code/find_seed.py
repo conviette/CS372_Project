@@ -4,7 +4,7 @@ import re
 from nltk.corpus import wordnet as wn
 import math, json
 
-targets = ["income","trade","earn","cpi","gnp","jobs","money-supply"]
+targets = ["income","trade","earn","cpi","gnp","jobs","money-supply",'crude', 'fuel', 'gas', 'gold','interest', 'ipi', 'money-fx']
 non_targets = [cat for cat in reuters.categories() if cat not in targets]
 stop_words = set(stopwords.words('english'))
 delimiters = {",",".","(",")","&","<",">",";",":","\""}
@@ -71,7 +71,7 @@ for cat in tf_idf:
     print(words[:60])
     data[cat] = words[:60]
 
-with open('keywords_by_tf_idf.json', 'w') as f:
+with open('..\\data\\keywords_by_tf_idf.json', 'w') as f:
     json.dump(data, f)
 
 
