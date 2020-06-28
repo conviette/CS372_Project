@@ -82,6 +82,7 @@ def _score_verb(tree,idx):
     VP = tree[idx]
 
     #check future or past
+    if type(VP) == type((1,2)): return time,pos
     for i in range(len(VP)):
         w,p = VP[i]
         if p == 'VBD' or p == 'VBN':
@@ -108,6 +109,16 @@ def _score_verb(tree,idx):
 
     return time, pos
 
+def parse(time,pos):
+    t = 'past'
+    if time == 0: t = 'present'
+    elif time == 1: t = 'future'
+
+    pn = 'pos'
+    if pos == -1: pn = 'neg'
+
+    return t,pn
+
 def tense(sent, word=None):
     '''
     get tense of target word(+ pos/neg)
@@ -133,7 +144,7 @@ def tense(sent, word=None):
     verb_idx = _nearest_verb(tree,node_idx)
     time,sent = _score_verb(tree,verb_idx)
 
-    return time,sent
+    return parse(time,sent)
 
 
 
