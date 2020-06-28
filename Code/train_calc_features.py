@@ -44,7 +44,7 @@ def find_features_agg(corpus_dict): ###edit this function to add featuress
 
     temp = FreqDist(temp).most_common(500)
     super_tense = [t[0] for t in temp]
-    print(super_tense)
+    
 
 
 
