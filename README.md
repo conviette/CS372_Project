@@ -1,4 +1,7 @@
-# CS372_Project
+# How Does a President Talk Their Economy into Success?
+
+This repository contains the code to analyze the correlation between economic indicators and the emphasis on economy in US presidential speeches. We hypothesize that an administration's political focus on the economy will manifest in both its presidential speeches and the actual economy. We use NLP techniques and linear regression to quantify the emphasis in speeches and compare them with economic indicators.
+
 
 ## Data Directory
 
